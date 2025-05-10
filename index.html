@@ -51,18 +51,19 @@
   </style>
 </head>
 <body>
+  <img class="logo" src="https://raw.githubusercontent.com/fabiola-vango/kikiri/main/kikiri-logo-horizontal-negro(1).jpg" alt="Logo Kikiri">
   <h1>Solicita tu Crédito Kikiri Verqor</h1>
   <form id="leadForm">
     <label>¿Trabajas con un empaque?</label>
-    <select id="empaque" required>
+    <select id="empaque" required onchange="document.getElementById('nombreEmpaque').classList.toggle('hidden', this.value !== 'sí');">
       <option value="">Selecciona</option>
       <option value="sí">Sí</option>
       <option value="no">No</option>
     </select>
 
-    <div id="tipoEmpaqueDiv" class="hidden">
-      <label>¿Qué tipo de empaque utilizas?</label>
-      <input type="text" id="tipoEmpaque" placeholder="Ejemplo: Plástico, Cartón, etc.">
+    <div id="nombreEmpaque" class="hidden">
+      <label>¿Con qué empaque trabajas?</label>
+      <input type="text" id="empaqueNombre">
     </div>
 
     <label>¿Emites facturas por la venta de tus cultivos?</label>
@@ -135,15 +136,22 @@
 
   <p id="mensaje" class="hidden">¡Gracias! Tu solicitud ha sido registrada.</p>
 
-  <script>
-    document.getElementById('empaque').addEventListener('change', function() {
-      const tipoEmpaqueDiv = document.getElementById('tipoEmpaqueDiv');
-      if (this.value === 'sí') {
-        tipoEmpaqueDiv.classList.remove('hidden');
-      } else {
-        tipoEmpaqueDiv.classList.add('hidden');
-      }
-    });
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCF2G36pr9m8ZD9B8NmzalnyU8iBe2KT9w",
+      authDomain: "kikiri-leads.firebaseapp.com",
+      projectId: "kikiri-leads",
+      storageBucket: "kikiri-leads.firebasestorage.app",
+      messagingSenderId: "953544990835",
+      appId: "1:953544990835:web:4761a6a9b59d820b110a06"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     document.getElementById("leadForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -152,7 +160,7 @@
 
       const lead = {
         trabajaConEmpaque: document.getElementById("empaque").value,
-        tipoEmpaque: document.getElementById("tipoEmpaque").value,
+        nombreEmpaque: document.getElementById("empaqueNombre")?.value || "",
         emiteFactura: document.getElementById("factura").value,
         adeudoBuro: document.getElementById("buro").value,
         experienciaCultivo: document.getElementById("experiencia").value,
@@ -168,10 +176,14 @@
         fecha: new Date().toISOString()
       };
 
-      // Aquí agregas el código para enviar a Firebase o tu backend
-      alert('Formulario enviado: ' + JSON.stringify(lead));
-      document.getElementById("leadForm").reset();
-      document.getElementById("mensaje").classList.remove("hidden");
+      try {
+        await addDoc(collection(db, "leads_credito_agricola"), lead);
+        document.getElementById("leadForm").reset();
+        document.getElementById("mensaje").classList.remove("hidden");
+        document.getElementById("nombreEmpaque").classList.add("hidden");
+      } catch (e) {
+        alert("Hubo un error: " + e.message);
+      }
     });
   </script>
 </body>
