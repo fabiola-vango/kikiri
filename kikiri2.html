@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crédito Kikiri Verqor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f7;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #8b1d32;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #8b1d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 150px;
+    }
+  </style>
+</head>
+<body>
+  <img src="kikiri-logo-vertical-negro(1).jpg" alt="Logo Kikiri" class="logo">
+  <h1>Solicita tu Crédito Kikiri Verqor</h1>
+  <form id="leadForm">
+    <label>¿Trabajas con un empaque?</label>
+    <select id="empaque" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>¿Emites facturas por la venta de tus cultivos?</label>
+    <select id="factura" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>¿Tienes adeudos en Buró de Crédito?</label>
+    <select id="buro" required>
+      <option value="">Selecciona</option>
+      <option value="no">No</option>
+      <option value="sí">Sí</option>
+      <option value="no_sé">No sé</option>
+    </select>
+
+    <label>¿Tienes más de un ciclo de experiencia?</label>
+    <select id="experiencia" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>¿Tienes tu INE vigente?</label>
+    <select id="ine" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>Tipo de cultivo</label>
+    <input type="text" id="tipoCultivo" required>
+
+    <label>Cultivo a financiar (nombre y toneladas)</label>
+    <input type="text" id="cultivoNuevo" required>
+
+    <label>Sistema de riego</label>
+    <select id="riego" required>
+      <option value="">Selecciona</option>
+      <option value="goteo">Goteo</option>
+      <option value="gravedad">Gravedad</option>
+      <option value="aspersión">Aspersión</option>
+      <option value="otro">Otro</option>
+    </select>
+
+    <label>Monto a financiar (MXN)</label>
+    <input type="number" id="monto" required>
+
+    <label>¿En qué usarías el crédito? (usa Ctrl para múltiples)</label>
+    <select id="usoCredito" multiple size="5" required>
+      <option value="Agroquímicos">Agroquímicos</option>
+      <option value="Fertilizantes">Fertilizantes</option>
+      <option value="Semilla o plántula">Semilla o plántula</option>
+      <option value="Mano de obra">Mano de obra</option>
+      <option value="Gasolina">Gasolina</option>
+    </select>
+
+    <label>Nombre completo</label>
+    <input type="text" id="nombre" required>
+
+    <label>Correo electrónico</label>
+    <input type="email" id="correo" required>
+
+    <label>Teléfono</label>
+    <input type="tel" id="telefono" required>
+
+    <label>¿Qué día y horario prefieres ser contactado por un asesor Kikiri?</label>
+    <input type="text" id="horarioContacto" placeholder="Ej. Lunes por la mañana" required>
+
+    <button type="submit">Enviar solicitud</button>
+  </form>
+
+  <p id="mensaje" class="hidden">¡Gracias! Tu solicitud ha sido registrada.</p>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCF2G36pr9m8ZD9B8NmzalnyU8iBe2KT9w",
+      authDomain: "kikiri-leads.firebaseapp.com",
+      projectId: "kikiri-leads",
+      storageBucket: "kikiri-leads.firebasestorage.app",
+      messagingSenderId: "953544990835",
+      appId: "1:953544990835:web:4761a6a9b59d820b110a06"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById("leadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const usos = Array.from(document.getElementById("usoCredito").selectedOptions).map(opt => opt.value);
+
+      const lead = {
+        trabajaConEmpaque: document.getElementById("empaque").value,
+        emiteFactura: document.getElementById("factura").value,
+        adeudoBuro: document.getElementById("buro").value,
+        experienciaCultivo: document.getElementById("experiencia").value,
+        ineVigente: document.getElementById("ine").value,
+        tipoCultivo: document.getElementById("tipoCultivo").value,
+        cultivoNuevo: document.getElementById("cultivoNuevo").value,
+        sistemaRiego: document.getElementById("riego").value,
+        montoFinanciar: document.getElementById("monto").value,
+        usoCredito: usos,
+        nombre: document.getElementById("nombre").value,
+        correo: document.getElementById("correo").value,
+        telefono: document.getElementById("telefono").value,
+        horarioContacto: document.getElementById("horarioContacto").value,
+        fecha: new Date().toISOString()
+      };
+
+      try {
+        await addDoc(collection(db, "leads_credito_agricola"), lead);
+        document.getElementById("leadForm").reset();
+        document.getElementById("mensaje").classList.remove("hidden");
+      } catch (e) {
+        alert("Hubo un error: " + e.message);
+      }
+    });
+  </script>
+</body>
+</html>
