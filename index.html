@@ -43,6 +43,11 @@
     .hidden {
       display: none;
     }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 150px;
+    }
   </style>
 </head>
 <body>
@@ -55,9 +60,9 @@
       <option value="no">No</option>
     </select>
 
-    <div id="detalleEmpaque" class="hidden">
-      <label>¿Con qué empaque trabajas?</label>
-      <input type="text" id="empaqueDetalle">
+    <div id="tipoEmpaqueDiv" class="hidden">
+      <label>¿Qué tipo de empaque utilizas?</label>
+      <input type="text" id="tipoEmpaque" placeholder="Ejemplo: Plástico, Cartón, etc.">
     </div>
 
     <label>¿Emites facturas por la venta de tus cultivos?</label>
@@ -67,27 +72,106 @@
       <option value="no">No</option>
     </select>
 
+    <label>¿Tienes adeudos en Buró de Crédito?</label>
+    <select id="buro" required>
+      <option value="">Selecciona</option>
+      <option value="no">No</option>
+      <option value="sí">Sí</option>
+      <option value="no_sé">No sé</option>
+    </select>
+
+    <label>¿Tienes más de un ciclo de experiencia?</label>
+    <select id="experiencia" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>¿Tienes tu INE vigente?</label>
+    <select id="ine" required>
+      <option value="">Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>Tipo de cultivo</label>
+    <input type="text" id="tipoCultivo" required>
+
+    <label>Sistema de riego</label>
+    <select id="riego" required>
+      <option value="">Selecciona</option>
+      <option value="goteo">Goteo</option>
+      <option value="gravedad">Gravedad</option>
+      <option value="aspersión">Aspersión</option>
+      <option value="otro">Otro</option>
+    </select>
+
+    <label>Monto a financiar (MXN)</label>
+    <input type="number" id="monto" required>
+
+    <label>¿En qué usarías el crédito? (usa Ctrl para múltiples)</label>
+    <select id="usoCredito" multiple size="5" required>
+      <option value="Agroquímicos">Agroquímicos</option>
+      <option value="Fertilizantes">Fertilizantes</option>
+      <option value="Semilla o plántula">Semilla o plántula</option>
+      <option value="Mano de obra">Mano de obra</option>
+      <option value="Gasolina">Gasolina</option>
+    </select>
+
+    <label>Nombre completo</label>
+    <input type="text" id="nombre" required>
+
+    <label>Correo electrónico</label>
+    <input type="email" id="correo" required>
+
+    <label>Teléfono</label>
+    <input type="tel" id="telefono" required>
+
+    <label>¿Qué día y horario prefieres ser contactado por un asesor Kikiri?</label>
+    <input type="text" id="horarioContacto" placeholder="Ej. Lunes por la mañana" required>
+
     <button type="submit">Enviar solicitud</button>
   </form>
 
   <p id="mensaje" class="hidden">¡Gracias! Tu solicitud ha sido registrada.</p>
 
   <script>
-    // Mostrar campo de empaque detalle solo si se selecciona "Sí" en "Trabajas con un empaque"
-    document.getElementById("empaque").addEventListener("change", function() {
-      var detalleEmpaque = document.getElementById("detalleEmpaque");
-      if (this.value === "sí") {
-        detalleEmpaque.classList.remove("hidden");
+    document.getElementById('empaque').addEventListener('change', function() {
+      const tipoEmpaqueDiv = document.getElementById('tipoEmpaqueDiv');
+      if (this.value === 'sí') {
+        tipoEmpaqueDiv.classList.remove('hidden');
       } else {
-        detalleEmpaque.classList.add("hidden");
+        tipoEmpaqueDiv.classList.add('hidden');
       }
     });
 
-    document.getElementById("leadForm").addEventListener("submit", function(e) {
+    document.getElementById("leadForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      var empaqueDetalle = document.getElementById("empaqueDetalle").value;
-      console.log("Detalles del empaque: " + empaqueDetalle); // Aquí puedes agregar la lógica de envío
+      const usos = Array.from(document.getElementById("usoCredito").selectedOptions).map(opt => opt.value);
+
+      const lead = {
+        trabajaConEmpaque: document.getElementById("empaque").value,
+        tipoEmpaque: document.getElementById("tipoEmpaque").value,
+        emiteFactura: document.getElementById("factura").value,
+        adeudoBuro: document.getElementById("buro").value,
+        experienciaCultivo: document.getElementById("experiencia").value,
+        ineVigente: document.getElementById("ine").value,
+        tipoCultivo: document.getElementById("tipoCultivo").value,
+        sistemaRiego: document.getElementById("riego").value,
+        montoFinanciar: document.getElementById("monto").value,
+        usoCredito: usos,
+        nombre: document.getElementById("nombre").value,
+        correo: document.getElementById("correo").value,
+        telefono: document.getElementById("telefono").value,
+        horarioContacto: document.getElementById("horarioContacto").value,
+        fecha: new Date().toISOString()
+      };
+
+      // Aquí agregas el código para enviar a Firebase o tu backend
+      alert('Formulario enviado: ' + JSON.stringify(lead));
+      document.getElementById("leadForm").reset();
+      document.getElementById("mensaje").classList.remove("hidden");
     });
   </script>
 </body>
