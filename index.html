@@ -51,7 +51,7 @@
   </style>
 </head>
 <body>
-  <img class="logo" src="https://raw.githubusercontent.com/fabiola-vango/kikiri/main/kikiri-logo-horizontal-negro(1).jpg" alt="Logo Kikiri">
+  <img class="logo" src="https://raw.githubusercontent.com/fabiola-vango/kikiri/main/kikiri-logo-horizontal-negro%281%29.jpg" alt="Logo Kikiri">
   <h1>Solicita tu Crédito Kikiri Verqor</h1>
   <form id="leadForm">
     <label>¿Trabajas con un empaque?</label>
@@ -167,24 +167,4 @@
         ineVigente: document.getElementById("ine").value,
         tipoCultivo: document.getElementById("tipoCultivo").value,
         sistemaRiego: document.getElementById("riego").value,
-        montoFinanciar: document.getElementById("monto").value,
-        usoCredito: usos,
-        nombre: document.getElementById("nombre").value,
-        correo: document.getElementById("correo").value,
-        telefono: document.getElementById("telefono").value,
-        horarioContacto: document.getElementById("horarioContacto").value,
-        fecha: new Date().toISOString()
-      };
-
-      try {
-        await addDoc(collection(db, "leads_credito_agricola"), lead);
-        document.getElementById("leadForm").reset();
-        document.getElementById("mensaje").classList.remove("hidden");
-        document.getElementById("nombreEmpaque").classList.add("hidden");
-      } catch (e) {
-        alert("Hubo un error: " + e.message);
-      }
-    });
-  </script>
-</body>
-</html>
+        montoFinanciar: document.getElementById("monto")
